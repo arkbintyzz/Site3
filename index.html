@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AccountBooks — Your identity, your way.</title>
+<meta name="description" content="A monochrome profile studio: glass cards, glowing rings, cursor trails, an MP3 player and a real Discord connect. Free to start, Pro for €2/month.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,380;0,9..144,500;0,9..144,600;1,9..144,400&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+:root{
+  --bg:#050505;
+  --white:#ffffff;
+  --paper:#f6f6f3;
+  --line:rgba(255,255,255,.12);
+  --line-soft:rgba(255,255,255,.07);
+  --line-strong:rgba(255,255,255,.30);
+  --glass:rgba(255,255,255,.045);
+  --glass-2:rgba(255,255,255,.075);
+  --g2:#bdbdbd; --g3:#8a8a8a; --g4:#5c5c5c;
+  --serif:'Fraunces', ui-serif, Georgia, serif;
+  --sans:'Inter', ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono:'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+
+html{ scroll-behavior:smooth; }
+body{ min-height:100vh; background:var(--bg); color:var(--white); font-family:var(--sans); overflow-x:hidden; }
+
+/* ===== AMBIENT BACKGROUND ===== */
+.background{ position:fixed; inset:0; pointer-events:none; z-index:-1; overflow:hidden; }
+.orb{ position:absolute; border-radius:50%; filter:blur(70px); opacity:.5; }
+.orb1{ width:520px; height:520px; left:8%; top:-120px; background:radial-gradient(circle, rgba(255,255,255,.10), transparent 70%); animation:float1 22s ease-in-out infinite; }
+.orb2{ width:420px; height:420px; right:6%; top:280px; background:radial-gradient(circle, rgba(255,255,255,.07), transparent 70%); animation:float2 26s ease-in-out infinite; }
+.orb3{ width:600px; height:600px; left:35%; top:900px; background:radial-gradient(circle, rgba(255,255,255,.06), transparent 70%); animation:float1 30s ease-in-out infinite reverse; }
+@keyframes float1{ 0%,100%{ transform:translate(0,0);} 50%{ transform:translate(40px,60px);} }
+@keyframes float2{ 0%,100%{ transform:translate(0,0);} 50%{ transform:translate(-50px,40px);} }
+.grain{ position:absolute; inset:0; opacity:.03; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.grid{ position:absolute; inset:0; opacity:.02; background-image:linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px); background-size:64px 64px; mask-image:linear-gradient(to bottom, black, transparent 75%); }
+@media (prefers-reduced-motion: reduce){ .orb{ animation:none !important; } }
+
+.eyebrow{ font-family:var(--mono); font-size:11px; letter-spacing:2.5px; text-transform:uppercase; color:var(--g3); }
+
+/* ===== GLASS PRIMITIVE ===== */
+.glass{ background:var(--glass); border:1px solid var(--line); backdrop-filter:blur(22px) saturate(140%); -webkit-backdrop-filter:blur(22px) saturate(140%); }
+
+/* ===== NAVBAR ===== */
+nav{ width:min(1150px, calc(100% - 40px)); height:70px; margin:20px auto 0; display:flex; align-items:center; justify-content:space-between; padding:0 10px 0 18px; border-radius:100px; position:relative; z-index:50; }
+nav.glass{ background:rgba(10,10,10,.55); box-shadow:0 20px 60px rgba(0,0,0,.4); }
+.brand{ display:flex; align-items:center; gap:11px; color:white; text-decoration:none; }
+.brand-word{ font-family:var(--serif); font-style:italic; font-weight:500; font-size:18px; letter-spacing:-.3px; }
+.brand-mark{ width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:#fff; }
+.brand-mark svg{ width:17px; height:17px; }
+
+.nav-links{ display:flex; align-items:center; gap:22px; }
+.nav-links a, .nav-links button{ color:#999; text-decoration:none; font-size:13px; font-weight:500; transition:.2s; background:none; border:none; font-family:var(--sans); cursor:pointer; }
+.nav-links a:hover, .nav-links button:hover{ color:white; }
+.plan-pill{ display:flex; align-items:center; gap:7px; font-family:var(--mono); font-size:11px; color:#aaa; padding:7px 12px; border-radius:99px; background:rgba(255,255,255,.06); border:1px solid var(--line); }
+.plan-pill .dot{ width:5px; height:5px; border-radius:50%; background:#666; }
+.plan-pill.is-pro .dot{ background:#fff; box-shadow:0 0 8px rgba(255,255,255,.9); animation:pulse 2s ease-in-out infinite; }
+@keyframes pulse{ 0%,100%{ opacity:1;} 50%{ opacity:.4;} }
+.nav-create{ color:#000 !important; background:#fff; padding:10px 18px; border-radius:99px; font-weight:650 !important; }
+.nav-create:hover{ transform:translateY(-1px); box-shadow:0 8px 20px rgba(255,255,255,.15); }
+
+/* ===== HERO ===== */
+.hero{ width:min(980px, calc(100% - 40px)); margin:0 auto; min-height:520px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:100px 0 60px; position:relative; }
+.announcement{ display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border-radius:99px; color:#aaa; font-family:var(--mono); font-size:11px; letter-spacing:.5px; margin-bottom:32px; }
+.announcement-dot{ width:5px; height:5px; border-radius:50%; background:#fff; box-shadow:0 0 10px rgba(255,255,255,.9); }
+.hero h1{ max-width:880px; font-family:var(--serif); font-weight:380; font-size:clamp(48px,8vw,90px); line-height:.98; letter-spacing:-3px; }
+.hero h1 em{ font-style:italic; background:linear-gradient(180deg,#fff,#777); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:400; }
+.hero-description{ max-width:540px; margin-top:26px; color:#8a8a8a; font-size:15.5px; line-height:1.7; }
+.hero-actions{ display:flex; gap:10px; margin-top:36px; }
+
+.button{ display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:14px 22px; border-radius:99px; text-decoration:none; font-size:13px; font-weight:600; transition:.2s; border:1px solid transparent; font-family:var(--sans); }
+.button-primary{ background:#fff; color:#000; }
+.button-primary:hover{ transform:translateY(-2px); box-shadow:0 14px 34px rgba(255,255,255,.16); }
+.button-secondary{ border:1px solid var(--line); background:rgba(255,255,255,.03); color:#ccc; cursor:pointer; }
+.button-secondary:hover{ border-color:var(--line-strong); color:white; background:rgba(255,255,255,.06); }
+
+/* ===== MARQUEE ===== */
+.marquee{ width:100%; overflow:hidden; padding:18px 0; margin-bottom:130px; border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); }
+.marquee-track{ display:flex; width:max-content; gap:44px; animation:marquee 26s linear infinite; }
+.marquee-track span{ font-family:var(--mono); font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#666; white-space:nowrap; display:flex; align-items:center; gap:44px; }
+.marquee-track span::after{ content:"✦"; color:#333; font-size:9px; }
+@keyframes marquee{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+@media (prefers-reduced-motion: reduce){ .marquee-track{ animation:none; } }
+
+.chain-divider{ width:min(1050px, calc(100% - 40px)); margin:0 auto 90px; display:flex; align-items:center; gap:10px; opacity:.45; }
+.chain-divider span{ width:4px; height:4px; border-radius:50%; background:#555; flex-shrink:0; }
+.chain-divider .ln{ flex:1; height:1px; background:linear-gradient(90deg, transparent, var(--line), transparent); }
+
+/* ===== SECTION SHELL ===== */
+.section{ width:min(1050px, calc(100% - 40px)); margin:0 auto 150px; }
+.section-heading{ text-align:center; margin-bottom:50px; }
+.section-heading h2{ margin-top:14px; font-family:var(--serif); font-weight:380; font-size:clamp(32px,5vw,48px); letter-spacing:-1.5px; }
+.section-heading p{ margin-top:14px; color:#818181; font-size:14px; max-width:460px; margin-left:auto; margin-right:auto; }
+
+/* ===== STUDIO ===== */
+.studio{ display:grid; grid-template-columns:340px 1fr; gap:16px; align-items:start; }
+
+.upgrade-bar{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:13px 18px; border-radius:16px; margin-bottom:16px; grid-column:1 / -1; }
+.upgrade-bar .l{ font-size:12px; color:#999; }
+.upgrade-bar .l b{ color:#fff; font-weight:600; }
+.upgrade-bar button{ font-family:var(--mono); font-size:11px; letter-spacing:.5px; text-transform:uppercase; background:#fff; color:#000; border:none; padding:9px 15px; border-radius:99px; cursor:pointer; font-weight:600; }
+.upgrade-bar button:hover{ opacity:.85; }
+.upgrade-bar.pro-on button{ background:transparent; border:1px solid var(--line); color:#aaa; }
+
+.panel{ border-radius:22px; overflow:hidden; }
+.tabs{ display:flex; flex-wrap:wrap; gap:4px; padding:12px; }
+.tab-btn{ flex:1 1 auto; padding:10px 8px; border-radius:99px; background:transparent; border:1px solid transparent; color:#777; font-size:11.5px; font-weight:600; cursor:pointer; font-family:var(--sans); white-space:nowrap; display:flex; align-items:center; justify-content:center; gap:4px; transition:.2s; }
+.tab-btn:hover{ color:#ccc; }
+.tab-btn.active{ background:#fff; color:#000; }
+.tab-btn .lock{ font-size:9px; opacity:.6; }
+.tab-btn.active .lock{ opacity:.4; }
+
+.tab-body{ padding:22px; display:none; }
+.tab-body.active{ display:block; animation:fadeUp .3s ease; }
+@keyframes fadeUp{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:translateY(0);} }
+
+.field{ margin-bottom:16px; }
+.field label{ display:block; font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.6px; text-transform:uppercase; color:#666; margin-bottom:8px; }
+.field input[type=text], .field input[type=url], .field textarea{
+  width:100%; background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:12px; padding:11px 13px;
+  color:var(--white); font-size:13px; font-family:var(--sans); resize:vertical;
+}
+.field input:focus, .field textarea:focus{ outline:none; border-color:var(--line-strong); background:rgba(255,255,255,.05); }
+.field .hint{ margin-top:7px; font-size:11px; color:#555; line-height:1.55; }
+
+.swatches{ display:flex; gap:9px; flex-wrap:wrap; }
+.swatch{ width:28px; height:28px; border-radius:50%; border:2px solid rgba(255,255,255,.15); cursor:pointer; transition:.2s; }
+.swatch:hover{ transform:scale(1.1); }
+.swatch.active{ border-color:#fff; box-shadow:0 0 0 3px rgba(255,255,255,.15); }
+
+.opt-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.opt{ padding:9px 13px; border-radius:99px; border:1px solid var(--line); background:rgba(255,255,255,.02); color:#888; font-size:12px; cursor:pointer; font-family:var(--sans); display:flex; align-items:center; gap:5px; transition:.2s; }
+.opt:hover{ border-color:var(--line-strong); color:white; }
+.opt.active{ border-color:transparent; color:#000; background:#fff; }
+.opt.locked{ color:#555; }
+.opt.locked .lk{ font-size:10px; opacity:.7; }
+
+.link-row{ display:flex; gap:6px; margin-bottom:8px; align-items:center; }
+.link-row select, .link-row input{ background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:10px; padding:8px 9px; color:var(--white); font-size:12px; font-family:var(--sans); }
+.link-row select{ width:96px; flex-shrink:0; }
+.link-row input{ flex:1; min-width:0; }
+.link-row button{ flex-shrink:0; width:30px; height:30px; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,.03); color:#888; cursor:pointer; font-size:13px; }
+.link-row button:hover{ color:#fff; border-color:var(--line-strong); }
+.add-link-btn{ width:100%; padding:10px; border-radius:99px; border:1px dashed var(--line-strong); background:transparent; color:#888; font-size:12px; cursor:pointer; font-family:var(--sans); margin-top:4px; }
+.add-link-btn:hover{ color:white; border-color:#fff; }
+.add-link-btn:disabled{ opacity:.4; cursor:not-allowed; }
+
+.avatar-upload{ display:flex; align-items:center; gap:12px; }
+.avatar-upload label.up{ padding:8px 14px; border:1px solid var(--line); border-radius:99px; font-size:12px; color:#aaa; cursor:pointer; }
+.avatar-upload label.up:hover{ color:white; border-color:var(--line-strong); }
+.avatar-upload input[type=file]{ display:none; }
+
+.locked-panel{ border-radius:16px; padding:30px 18px; text-align:center; background:rgba(255,255,255,.02); border:1px solid var(--line-soft); }
+.locked-panel .lk-icon{ width:38px; height:38px; margin:0 auto 12px; border-radius:50%; background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center; font-size:15px; }
+.locked-panel p{ font-size:12px; color:#888; margin-bottom:16px; line-height:1.6; }
+.locked-panel button{ font-family:var(--mono); font-size:11px; letter-spacing:.5px; text-transform:uppercase; background:#fff; color:#000; border:none; padding:10px 18px; border-radius:99px; cursor:pointer; font-weight:600; }
+
+.music-drop{ border:1px dashed var(--line-strong); border-radius:14px; padding:20px; text-align:center; color:#777; font-size:12px; cursor:pointer; }
+.music-drop:hover{ color:white; border-color:#fff; }
+.music-drop input{ display:none; }
+.music-now{ margin-top:12px; display:flex; align-items:center; gap:10px; font-size:12px; color:#aaa; }
+
+.discord-btn{ width:100%; padding:12px; border-radius:99px; border:none; background:#fff; color:#000; font-weight:650; font-size:13px; cursor:pointer; font-family:var(--sans); display:flex; align-items:center; justify-content:center; gap:8px; }
+.discord-btn:hover{ opacity:.9; }
+.demo-btn{ width:100%; margin-top:8px; padding:10px; border-radius:99px; border:1px solid var(--line); background:transparent; color:#888; font-size:12px; cursor:pointer; font-family:var(--sans); }
+.demo-btn:hover{ color:white; border-color:var(--line-strong); }
+.disconnect-btn{ width:100%; margin-top:8px; padding:10px; border-radius:99px; border:1px solid var(--line); background:transparent; color:#999; font-size:12px; cursor:pointer; font-family:var(--sans); }
+
+/* ===== PREVIEW / LINKPAD-STYLE PROFILE ===== */
+.browser{ padding:10px; border-radius:28px; position:sticky; top:20px; box-shadow:0 60px 140px rgba(0,0,0,.55); }
+.browser-top{ height:36px; display:flex; align-items:center; padding:0 14px; position:relative; }
+.browser-dots{ display:flex; gap:6px; }
+.browser-dots span{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.15); }
+.address{ position:absolute; left:50%; transform:translateX(-50%); color:#555; font-family:var(--mono); font-size:11px; }
+
+#previewStage{
+  min-height:600px; display:flex; align-items:center; justify-content:center; padding:56px 20px;
+  border-radius:0 0 22px 22px; position:relative; overflow:hidden;
+  background:radial-gradient(ellipse at 50% 0%, #1a1a1a 0%, #0a0a0a 55%, #030303 100%);
+  transition:background .3s;
+}
+#previewStage.stage-paper{ background:radial-gradient(ellipse at 50% 0%, #ffffff 0%, var(--paper) 100%) !important; }
+#fxCanvas{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; }
+#customCursor{ position:absolute; top:0; left:0; width:24px; height:24px; border-radius:50%; border:1.5px solid rgba(255,255,255,.9); pointer-events:none; transform:translate(-50%,-50%); transition:width .12s,height .12s,opacity .12s; z-index:40; opacity:0; mix-blend-mode:difference; }
+#customCursor.dot{ background:#fff; border:none; width:8px; height:8px; }
+#customCursor.link{ width:14px; height:14px; border-color:#fff; }
+.trail-dot{ position:absolute; top:0; left:0; width:7px; height:7px; border-radius:50%; background:#fff; pointer-events:none; z-index:39; transform:translate(-50%,-50%); opacity:0; }
+
+.profile-card{ width:328px; text-align:center; position:relative; z-index:2; padding:36px 26px 30px; border-radius:26px; }
+.profile-card.glass{ box-shadow:0 30px 80px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.06); }
+#previewStage.stage-paper .profile-card.glass{ background:rgba(255,255,255,.6); border-color:rgba(0,0,0,.08); box-shadow:0 30px 60px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.5); }
+
+.avatar-ring{ width:98px; height:98px; margin:0 auto; border-radius:50%; padding:3px; position:relative; background:conic-gradient(from 0deg, #fff, #3a3a3a, #fff, #3a3a3a, #fff); animation:spin 7s linear infinite; }
+@keyframes spin{ to{ transform:rotate(360deg);} }
+@media (prefers-reduced-motion: reduce){ .avatar-ring{ animation:none; } }
+.avatar-ring-mask{ width:100%; height:100%; border-radius:50%; background:#0a0a0a; padding:3px; }
+#previewStage.stage-paper .avatar-ring-mask{ background:#f6f6f3; }
+.profile-avatar{ width:100%; height:100%; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:26px; font-weight:500; overflow:hidden; color:#fff; background:linear-gradient(145deg,#2a2a2a,#0c0c0c); }
+#previewStage.stage-paper .profile-avatar{ background:linear-gradient(145deg,#eee,#fff); color:#0a0a0a; }
+.profile-avatar img{ width:100%; height:100%; object-fit:cover; }
+.status-dot{ position:absolute; bottom:2px; right:calc(50% - 49px); width:16px; height:16px; border-radius:50%; background:#0a0a0a; border:3px solid #fff; }
+#previewStage.stage-paper .status-dot{ background:#fff; border-color:#0a0a0a; }
+
+.profile-name{ margin-top:18px; font-family:var(--serif); font-size:23px; font-weight:500; letter-spacing:-.4px; display:flex; align-items:center; justify-content:center; gap:6px; color:#fff; }
+#previewStage.stage-paper .profile-name{ color:#0a0a0a; }
+.pro-tag{ font-family:var(--mono); font-size:9px; letter-spacing:1px; border-radius:99px; padding:3px 7px; color:#000; background:#fff; }
+.profile-username{ margin-top:4px; color:#666; font-family:var(--mono); font-size:11.5px; }
+.view-count{ margin-top:10px; display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10.5px; color:#666; padding:5px 11px; border-radius:99px; background:rgba(255,255,255,.04); border:1px solid var(--line-soft); }
+#previewStage.stage-paper .view-count{ background:rgba(0,0,0,.03); border-color:rgba(0,0,0,.08); color:#888; }
+.view-count .p{ width:5px; height:5px; border-radius:50%; background:#4ade80; opacity:.9; }
+
+.profile-bio{ margin:16px auto 4px; max-width:270px; color:#999; font-size:13px; line-height:1.6; white-space:pre-wrap; }
+#previewStage.stage-paper .profile-bio{ color:#555; }
+
+.badges{ display:flex; justify-content:center; gap:6px; margin:12px 0 2px; flex-wrap:wrap; }
+.badge{ width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,.06); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; }
+.badge svg{ width:12px; height:12px; }
+#previewStage.stage-paper .badge{ background:#fff; border-color:rgba(0,0,0,.1); }
+.demo-flag{ font-family:var(--mono); font-size:9px; letter-spacing:.8px; text-transform:uppercase; color:#555; margin:6px 0 4px; }
+
+.player{ margin:16px auto 4px; display:flex; align-items:center; gap:10px; padding:9px 14px; border-radius:99px; background:rgba(255,255,255,.05); border:1px solid var(--line); }
+#previewStage.stage-paper .player{ background:rgba(0,0,0,.04); border-color:rgba(0,0,0,.1); }
+.player button{ width:26px; height:26px; border-radius:50%; border:none; background:#fff; color:#000; font-size:11px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.player .title{ font-size:11px; color:#999; text-align:left; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family:var(--mono); max-width:130px; }
+.eq{ display:flex; align-items:flex-end; gap:2px; height:14px; flex-shrink:0; }
+.eq span{ width:2.5px; background:#fff; border-radius:2px; height:4px; }
+#previewStage.stage-paper .eq span{ background:#0a0a0a; }
+.eq.playing span{ animation:eqbeat 0.8s ease-in-out infinite; }
+.eq span:nth-child(2){ animation-delay:.15s !important; }
+.eq span:nth-child(3){ animation-delay:.3s !important; }
+@keyframes eqbeat{ 0%,100%{ height:4px; } 50%{ height:14px; } }
+
+.profile-links{ display:flex; flex-direction:column; gap:9px; margin-top:20px; }
+.profile-link{ width:100%; padding:12px 16px 12px 12px; display:flex; align-items:center; gap:11px; border-radius:99px; background:rgba(255,255,255,.04); border:1px solid var(--line); color:#e5e5e5; text-decoration:none; font-size:13px; transition:.22s cubic-bezier(.2,.8,.2,1); }
+.profile-link:hover{ background:rgba(255,255,255,.09); border-color:var(--line-strong); transform:translateY(-2px) scale(1.01); box-shadow:0 10px 24px rgba(0,0,0,.25); }
+#previewStage.stage-paper .profile-link{ border-color:rgba(0,0,0,.1); background:rgba(0,0,0,.02); color:#111; }
+#previewStage.stage-paper .profile-link:hover{ background:rgba(0,0,0,.05); box-shadow:0 10px 20px rgba(0,0,0,.08); }
+.pl-icon{ width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.08); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; }
+#previewStage.stage-paper .pl-icon{ background:rgba(0,0,0,.06); }
+.pl-label{ flex:1; text-align:left; }
+.pl-arrow{ opacity:.4; font-size:11px; }
+
+.watermark{ margin-top:22px; font-family:var(--mono); font-size:9px; letter-spacing:1.5px; color:#3a3a3a; display:flex; align-items:center; justify-content:center; gap:6px; }
+#previewStage.stage-paper .watermark{ color:#c9c9c4; }
+
+/* ===== FEATURE CARDS (glass grid, not boxy rows) ===== */
+.features{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.feature{ padding:28px 24px; border-radius:22px; transition:.3s; position:relative; overflow:hidden; }
+.feature::before{ content:""; position:absolute; inset:0; background:radial-gradient(160px circle at 30% 0%, rgba(255,255,255,.06), transparent 70%); opacity:0; transition:.3s; }
+.feature:hover{ transform:translateY(-4px); }
+.feature:hover::before{ opacity:1; }
+.feature-icon{ width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.06); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:14px; margin-bottom:26px; }
+.feature h3{ font-family:var(--serif); font-weight:500; font-size:17px; letter-spacing:-.2px; display:flex; align-items:center; gap:8px; }
+.feature p{ margin-top:8px; color:#818181; font-size:13px; line-height:1.6; }
+.tier-tag{ font-family:var(--mono); font-size:9.5px; letter-spacing:1px; text-transform:uppercase; padding:4px 9px; border-radius:99px; border:1px solid var(--line); color:#888; white-space:nowrap; }
+.tier-tag.pro{ border-color:transparent; color:#000; background:#fff; }
+
+/* ===== PRICING (inverted) ===== */
+.section-invert{ width:100%; background:var(--paper); color:#0a0a0a; padding:110px 0; margin-bottom:150px; position:relative; }
+.section-invert .section-inner{ width:min(1050px, calc(100% - 40px)); margin:0 auto; }
+.section-invert .eyebrow{ color:#999; }
+.section-invert .section-heading h2{ color:#0a0a0a; }
+.section-invert .section-heading p{ color:#666; }
+
+.pricing-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.price-card{ border-radius:26px; padding:36px 32px; background:#fff; border:1px solid rgba(0,0,0,.1); box-shadow:0 20px 50px rgba(0,0,0,.05); }
+.price-card.pro{ background:#0a0a0a; border-color:#0a0a0a; color:#fff; box-shadow:0 30px 70px rgba(0,0,0,.3); transform:scale(1.02); }
+.price-card .tier{ font-family:var(--mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#888; }
+.price-card.pro .tier{ color:#999; }
+.price-card .amount{ margin-top:14px; font-family:var(--serif); font-size:48px; letter-spacing:-1.5px; }
+.price-card .amount span{ font-family:var(--sans); font-size:13px; color:#888; letter-spacing:0; }
+.price-card ul{ list-style:none; margin:26px 0 30px; display:flex; flex-direction:column; gap:12px; }
+.price-card li{ font-size:13px; color:#444; display:flex; gap:9px; align-items:flex-start; }
+.price-card.pro li{ color:#ccc; }
+.price-card li::before{ content:"✦"; color:#bbb; flex-shrink:0; font-size:10px; margin-top:3px; }
+.price-card.pro li::before{ color:#555; }
+.price-card .button{ width:100%; }
+.price-card.pro .button-primary{ background:#fff; color:#0a0a0a; }
+.price-card:not(.pro) .button-secondary{ border-color:rgba(0,0,0,.15); color:#0a0a0a; background:transparent; }
+.price-card:not(.pro) .button-secondary:hover{ border-color:rgba(0,0,0,.35); background:rgba(0,0,0,.03); }
+
+/* ===== CTA ===== */
+.cta{ width:min(1000px, calc(100% - 40px)); margin:0 auto 120px; padding:100px 25px; text-align:center; border-radius:32px; position:relative; overflow:hidden; }
+.cta h2{ font-family:var(--serif); font-weight:380; font-size:clamp(36px,6vw,58px); letter-spacing:-2px; }
+.cta p{ margin:15px auto 30px; color:#818181; font-size:14px; }
+
+/* ===== FOOTER ===== */
+footer{ width:min(1150px, calc(100% - 40px)); margin:0 auto; padding:25px 0 35px; display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--line-soft); color:#444; font-family:var(--mono); font-size:11px; }
+footer a{ color:#555; text-decoration:none; margin-left:18px; }
+footer a:hover{ color:#aaa; }
+
+/* ===== MODAL ===== */
+.modal-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.72); backdrop-filter:blur(6px); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; }
+.modal-overlay.open{ display:flex; }
+.modal{ width:100%; max-width:400px; background:rgba(15,15,15,.9); backdrop-filter:blur(30px); border:1px solid var(--line-strong); border-radius:24px; padding:30px; box-shadow:0 40px 100px rgba(0,0,0,.5); }
+.modal h3{ font-family:var(--serif); font-weight:500; font-size:22px; letter-spacing:-.4px; margin-bottom:8px; }
+.modal p{ font-size:12.5px; color:#888; margin-bottom:18px; line-height:1.65; }
+.modal ul{ list-style:none; margin:0 0 20px; display:flex; flex-direction:column; gap:9px; }
+.modal li{ font-size:12.5px; color:#ccc; display:flex; gap:8px; }
+.modal li::before{ content:"✦"; color:#555; font-size:10px; margin-top:3px; }
+.modal .price-line{ font-family:var(--serif); font-size:32px; margin-bottom:4px; }
+.modal .price-line span{ font-family:var(--sans); font-size:12px; color:#777; }
+.modal .field input{ width:100%; }
+.modal-actions{ display:flex; gap:8px; margin-top:18px; }
+.modal-actions .button{ flex:1; cursor:pointer; }
+
+@media (max-width:900px){
+  .studio{ grid-template-columns:1fr; }
+  .browser{ position:static; }
+  .pricing-grid{ grid-template-columns:1fr; }
+  .price-card.pro{ transform:none; }
+}
+@media (max-width:750px){
+  nav{ width:calc(100% - 24px); margin-top:12px; }
+  .nav-links{ gap:8px; }
+  .nav-links a:not(.nav-create), .plan-pill{ display:none; }
+  .hero{ min-height:520px; padding-top:80px; }
+  .hero h1{ letter-spacing:-1.5px; }
+  .hero-description{ font-size:14px; }
+  .hero-actions{ width:100%; max-width:300px; flex-direction:column; }
+  .features{ grid-template-columns:1fr; }
+  footer{ flex-direction:column; gap:15px; }
+  footer a{ margin:0 8px; }
+}
+@media (prefers-reduced-motion: reduce){
+  .eq span, html, .marquee-track{ animation:none !important; scroll-behavior:auto !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="background"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div><div class="grid"></div><div class="grain"></div></div>
+
+<!-- NAVIGATION -->
+<nav class="glass">
+  <a href="#" class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 6C6.7 6 4 8.7 4 12v24c0 3.3 2.7 6 6 6h28c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2H10z" fill="#000"/>
+        <path d="M10 36c-1.7 0-3-1.3-3-3s1.3-3 3-3h28v6H10z" fill="#333"/>
+        <path d="M8.5 33.3c0-.7.6-1.3 1.3-1.3H22v6H9.8c-.7 0-1.3-.6-1.3-1.3v-3.4z" fill="#fff"/>
+        <path d="M26.5 15.5l3-3a4.2 4.2 0 116 6l-3 3M21.5 20.5l-3 3a4.2 4.2 0 106 6l3-3M20 26l8-8" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="brand-word">AccountBooks</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <div class="plan-pill" id="planPill"><span class="dot"></span><span id="planPillText">Free plan</span></div>
+    <a href="#" class="nav-create" id="navCreateBtn">Create profile</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="announcement glass"><span class="announcement-dot"></span> IDENTITY, IN BLACK AND WHITE</div>
+  <h1>Everything you.<br><em>One AccountBook.</em></h1>
+  <p class="hero-description">A single, considered page for everything you make and everywhere you are. Glass, glow and grain — no colour, just presence.</p>
+  <div class="hero-actions">
+    <a href="#studio" class="button button-primary">Open the studio →</a>
+    <a href="#pricing" class="button button-secondary">See pricing</a>
+  </div>
+</section>
+
+<div class="marquee"><div class="marquee-track" id="marqueeTrack"></div></div>
+
+<!-- STUDIO -->
+<section class="section" id="studio">
+  <div class="section-heading">
+    <div class="eyebrow">Live studio</div>
+    <h2>Build it, watch it update.</h2>
+    <p>Everything previews instantly on the right. Nothing here is uploaded anywhere — it's a local demo of the editor.</p>
+  </div>
+
+  <div class="studio">
+    <div class="upgrade-bar glass" id="upgradeBar">
+      <div class="l">You're on the <b>Free</b> plan — cursors, effects, music and Discord are Pro.</div>
+      <button id="upgradeBarBtn">Upgrade — €2/mo</button>
+    </div>
+
+    <!-- EDITOR PANEL -->
+    <div class="panel glass">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="profile">Profile</button>
+        <button class="tab-btn" data-tab="theme">Theme</button>
+        <button class="tab-btn" data-tab="cursor">Cursor <span class="lock" data-lock>🔒</span></button>
+        <button class="tab-btn" data-tab="fx">Effects <span class="lock" data-lock>🔒</span></button>
+        <button class="tab-btn" data-tab="music">Music <span class="lock" data-lock>🔒</span></button>
+        <button class="tab-btn" data-tab="discord">Discord <span class="lock" data-lock>🔒</span></button>
+      </div>
+
+      <!-- PROFILE TAB -->
+      <div class="tab-body active" data-tab="profile">
+        <div class="field">
+          <label>Avatar</label>
+          <div class="avatar-upload">
+            <label class="up">Upload image
+              <input type="file" id="avatarInput" accept="image/*">
+            </label>
+            <span class="hint" id="avatarHint">or leave blank to use your initial</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Display name</label>
+          <input type="text" id="nameInput" value="Ark" maxlength="40">
+        </div>
+        <div class="field">
+          <label>Username</label>
+          <input type="text" id="userInput" value="ark" maxlength="30">
+        </div>
+        <div class="field">
+          <label>Bio</label>
+          <textarea id="bioInput" rows="3" maxlength="140">Developer · Creator · Gamer</textarea>
+        </div>
+        <div class="field">
+          <label>Links <span id="linkCount" style="color:#555;">(4/4 free)</span></label>
+          <div id="linkRows"></div>
+          <button class="add-link-btn" id="addLinkBtn">+ Add a link</button>
+        </div>
+      </div>
+
+      <!-- THEME TAB -->
+      <div class="tab-body" data-tab="theme">
+        <div class="field">
+          <label>Page contrast</label>
+          <div class="opt-row" id="themeOpts">
+            <button class="opt active" data-theme="ink">Ink (dark)</button>
+            <button class="opt" data-theme="paper">Paper (light)</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Accent shade <span class="lock" data-lock>🔒 Pro</span></label>
+          <div class="swatches" id="accentSwatches"></div>
+          <p class="hint">Fine-tune the grey used on hover states and highlights.</p>
+        </div>
+      </div>
+
+      <!-- CURSOR TAB -->
+      <div class="tab-body" data-tab="cursor">
+        <div id="cursorLocked" class="locked-panel">
+          <div class="lk-icon">🔒</div>
+          <p>Custom cursors are a Pro feature. Swap the pointer for a ring, dot, trail, or chain-link glyph.</p>
+          <button id="cursorUpgradeBtn">Upgrade — €2/mo</button>
+        </div>
+        <div id="cursorUnlocked" style="display:none;">
+          <div class="field">
+            <label>Cursor style (preview area)</label>
+            <div class="opt-row" id="cursorOpts">
+              <button class="opt active" data-cursor="system">System</button>
+              <button class="opt" data-cursor="ring">Ring</button>
+              <button class="opt" data-cursor="dot">Dot</button>
+              <button class="opt" data-cursor="trail">Trail</button>
+              <button class="opt" data-cursor="link">Chain link</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EFFECTS TAB -->
+      <div class="tab-body" data-tab="fx">
+        <div id="fxLocked" class="locked-panel">
+          <div class="lk-icon">🔒</div>
+          <p>Ambient effects are a Pro feature. Add quiet motion behind your profile — snow, stardust, or digital rain.</p>
+          <button id="fxUpgradeBtn">Upgrade — €2/mo</button>
+        </div>
+        <div id="fxUnlocked" style="display:none;">
+          <div class="field">
+            <label>Background effect</label>
+            <div class="opt-row" id="fxOpts">
+              <button class="opt active" data-fx="none">None</button>
+              <button class="opt" data-fx="snow">Snow</button>
+              <button class="opt" data-fx="stars">Stardust</button>
+              <button class="opt" data-fx="rain">Digital rain</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MUSIC TAB -->
+      <div class="tab-body" data-tab="music">
+        <div id="musicLocked" class="locked-panel">
+          <div class="lk-icon">🔒</div>
+          <p>The MP3 player is a Pro feature. Give your profile a theme song with a live mini player.</p>
+          <button id="musicUpgradeBtn">Upgrade — €2/mo</button>
+        </div>
+        <div id="musicUnlocked" style="display:none;">
+          <div class="field">
+            <label>Profile track</label>
+            <label class="music-drop" for="musicInput">
+              Click to upload an MP3<br><span style="color:#555">Plays from a mini player on your profile</span>
+              <input type="file" id="musicInput" accept="audio/*">
+            </label>
+            <div class="music-now" id="musicNow" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DISCORD TAB -->
+      <div class="tab-body" data-tab="discord">
+        <div id="discordLocked" class="locked-panel">
+          <div class="lk-icon">🔒</div>
+          <p>Discord connect is a Pro feature. Show your live username, avatar, status and public badges.</p>
+          <button id="discordUpgradeBtn">Upgrade — €2/mo</button>
+        </div>
+        <div id="discordUnlocked" style="display:none;">
+          <div class="field" id="discordDisconnected">
+            <label>Connect your Discord</label>
+            <p class="hint" style="margin-bottom:12px;">Real Discord OAuth (identify scope, client-side implicit grant) — no backend or client secret required.</p>
+            <button class="discord-btn" id="discordConnectBtn">Connect with Discord</button>
+            <button class="demo-btn" id="discordDemoBtn">Preview with demo data instead</button>
+            <div class="field" style="margin-top:14px;">
+              <label>Your OAuth Client ID (optional)</label>
+              <input type="text" id="clientIdInput" placeholder="e.g. 123456789012345678">
+              <p class="hint">Register a free app at discord.com/developers, add this page's URL as a redirect, set scope to <code>identify</code>.</p>
+            </div>
+          </div>
+          <div id="discordConnected" style="display:none;">
+            <p class="hint" style="margin-bottom:10px;">Connected — your username, avatar and badges below now come from that account.</p>
+            <button class="disconnect-btn" id="discordDisconnectBtn">Disconnect</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="browser glass">
+      <div class="browser-top">
+        <div class="browser-dots"><span></span><span></span><span></span></div>
+        <div class="address" id="addressBar">accountbooks.com/ark</div>
+      </div>
+      <div id="previewStage">
+        <canvas id="fxCanvas"></canvas>
+        <div id="customCursor"></div>
+        <div id="trailLayer"></div>
+        <div class="profile-card glass">
+          <div class="avatar-ring" id="avatarRing">
+            <div class="avatar-ring-mask">
+              <div class="profile-avatar" id="previewAvatar">A</div>
+            </div>
+            <div class="status-dot" id="statusDot"></div>
+          </div>
+          <div class="profile-name" id="previewName">Ark <span class="pro-tag" id="proTag" style="display:none;">PRO</span></div>
+          <div class="profile-username" id="previewUser">@ark</div>
+          <div class="view-count"><span class="p"></span><span id="viewCountText">12,482 views</span></div>
+          <div class="badges" id="previewBadges" style="display:none;"></div>
+          <div class="demo-flag" id="demoFlag" style="display:none;">Demo Discord data</div>
+          <div class="profile-bio" id="previewBio">Developer · Creator · Gamer</div>
+          <div class="player" id="musicPlayer" style="display:none;">
+            <button id="playBtn">▶</button>
+            <div class="title" id="playerTitle">track.mp3</div>
+            <div class="eq" id="eq"><span></span><span></span><span></span></div>
+          </div>
+          <div class="profile-links" id="previewLinks"></div>
+          <div class="watermark" id="watermark"><span>✦</span> MADE WITH ACCOUNTBOOKS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="chain-divider"><span></span><div class="ln"></div><span></span></div>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="section-heading">
+    <div class="eyebrow">Features</div>
+    <h2>Make it yours.</h2>
+    <p>Six things your profile can do — three are free forever, three are Pro.</p>
+  </div>
+  <div class="features">
+    <div class="feature glass"><div class="feature-icon">◇</div><h3>One link</h3><p>GitHub, YouTube, Twitch, Spotify, TikTok and anything else, together in one place.</p><div style="margin-top:16px;"><span class="tier-tag">Free</span></div></div>
+    <div class="feature glass"><div class="feature-icon">◐</div><h3>Ink &amp; Paper</h3><p>Two considered contrast modes for your page — pure black, or pure white.</p><div style="margin-top:16px;"><span class="tier-tag">Free</span></div></div>
+    <div class="feature glass"><div class="feature-icon">◈</div><h3>Up to 4 links</h3><p>Enough for the essentials. Pro raises the ceiling to 10.</p><div style="margin-top:16px;"><span class="tier-tag">Free</span></div></div>
+    <div class="feature glass"><div class="feature-icon">✧</div><h3>Custom cursors</h3><p>A ring, dot, trail, or chain-link glyph replaces the pointer across your page.</p><div style="margin-top:16px;"><span class="tier-tag pro">Pro</span></div></div>
+    <div class="feature glass"><div class="feature-icon">❄</div><h3>Ambient effects &amp; MP3</h3><p>Quiet motion behind your content, and a theme song with a live mini player.</p><div style="margin-top:16px;"><span class="tier-tag pro">Pro</span></div></div>
+    <div class="feature glass"><div class="feature-icon">◆</div><h3>Discord connect</h3><p>Your real username, avatar, status and badges, pulled live via OAuth. No watermark.</p><div style="margin-top:16px;"><span class="tier-tag pro">Pro</span></div></div>
+  </div>
+</section>
+
+<!-- PRICING (inverted) -->
+<section class="section-invert" id="pricing">
+  <div class="section-inner">
+    <div class="section-heading">
+      <div class="eyebrow">Pricing</div>
+      <h2>Free to start. €2 to finish it.</h2>
+      <p>One plan, one price, cancel any time. This is a demo — no real payment is processed here.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="tier">Free</div>
+        <div class="amount">€0 <span>/ forever</span></div>
+        <ul>
+          <li>1 AccountBooks page</li>
+          <li>Up to 4 links</li>
+          <li>Ink &amp; Paper contrast modes</li>
+          <li>AccountBooks watermark</li>
+        </ul>
+        <button class="button button-secondary" id="freeStartBtn">Start free</button>
+      </div>
+      <div class="price-card pro">
+        <div class="tier">Pro</div>
+        <div class="amount">€2 <span>/ month</span></div>
+        <ul>
+          <li>Up to 10 links</li>
+          <li>Custom cursors &amp; trail effects</li>
+          <li>Ambient effects</li>
+          <li>MP3 player</li>
+          <li>Discord connect, status &amp; badges</li>
+          <li>Watermark removed</li>
+        </ul>
+        <button class="button button-primary" id="proStartBtn">Upgrade to Pro</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta glass">
+  <h2>Claim your @username.</h2>
+  <p>Create your AccountBook and put everything in one place.</p>
+  <a href="#studio" class="button button-primary">Open the studio →</a>
+</section>
+
+<footer>
+  <div>© 2026 ACCOUNTBOOKS</div>
+  <div><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Discord</a></div>
+</footer>
+
+<!-- CREATE PROFILE MODAL -->
+<div class="modal-overlay" id="createModal">
+  <div class="modal">
+    <h3>Claim your username</h3>
+    <p>This is a front-end demo — nothing is saved to a server or persisted after you leave the page. It jumps you into the studio.</p>
+    <div class="field"><label>Username</label><input type="text" id="claimInput" placeholder="yourname"></div>
+    <div class="modal-actions">
+      <button class="button button-secondary" id="claimCancel">Cancel</button>
+      <a href="#studio" class="button button-primary" id="claimGo">Start building →</a>
+    </div>
+  </div>
+</div>
+
+<!-- UPGRADE MODAL -->
+<div class="modal-overlay" id="upgradeModal">
+  <div class="modal">
+    <h3>Upgrade to Pro</h3>
+    <div class="price-line">€2 <span>/ month</span></div>
+    <p>Unlocks the following in the studio:</p>
+    <ul>
+      <li>Custom cursors — ring, dot, trail, chain link</li>
+      <li>Ambient effects — snow, stardust, digital rain</li>
+      <li>MP3 player with a live mini player</li>
+      <li>Discord connect with status &amp; real badges</li>
+      <li>Up to 10 links, watermark removed</li>
+    </ul>
+    <p style="margin-top:-8px;">This is a demo — no real payment is processed. "Simulate" just unlocks the studio so you can try it.</p>
+    <div class="modal-actions">
+      <button class="button button-secondary" id="upgradeCancel">Maybe later</button>
+      <button class="button button-primary" id="upgradeConfirm">Simulate upgrade</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const state = {
+    name: "Ark", user: "ark", bio: "Developer · Creator · Gamer",
+    avatarUrl: "", theme: "ink", accent: "#ffffff",
+    cursor: "system", fx: "none",
+    links: [
+      {platform:"discord", label:"Discord", url:"#"},
+      {platform:"github", label:"GitHub", url:"#"},
+      {platform:"youtube", label:"YouTube", url:"#"},
+      {platform:"custom", label:"My Projects", url:"#"}
+    ],
+    musicName:"", pro:false,
+    discord: null, discordDemo:false
+  };
+
+  const ACCENTS = ["#ffffff","#d9d9d9","#b0b0b0","#7a7a7a","#4a4a4a"];
+  const FREE_LINK_MAX = 4, PRO_LINK_MAX = 10;
+
+  const words = ["CUSTOM THEMES","CUSTOM CURSORS","AMBIENT EFFECTS","MP3 PLAYER","DISCORD CONNECT","PRO — €2/MO"];
+  const track = document.getElementById('marqueeTrack');
+  for(let r=0;r<2;r++){ words.forEach(w=>{ const s=document.createElement('span'); s.textContent=w; track.appendChild(s); }); }
+
+  document.querySelectorAll('a[href^="#"]').forEach(link=>{
+    link.addEventListener('click', e=>{
+      const id = link.getAttribute('href');
+      const target = id.length>1 ? document.querySelector(id) : null;
+      if(!target) return;
+      e.preventDefault();
+      target.scrollIntoView({behavior: reducedMotion ? 'auto' : 'smooth'});
+    });
+  });
+
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.tab-body').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelector('.tab-body[data-tab="'+btn.dataset.tab+'"]').classList.add('active');
+    });
+  });
+
+  const nameInput = document.getElementById('nameInput');
+  const userInput = document.getElementById('userInput');
+  const bioInput = document.getElementById('bioInput');
+  const addressBar = document.getElementById('addressBar');
+
+  function slug(v){ return v.toLowerCase().replace(/[^a-z0-9_]/g,'').slice(0,30) || 'you'; }
+
+  nameInput.addEventListener('input', ()=>{ state.name = nameInput.value || 'You'; renderProfile(); });
+  userInput.addEventListener('input', ()=>{ state.user = slug(userInput.value); renderProfile(); });
+  bioInput.addEventListener('input', ()=>{ state.bio = bioInput.value; renderProfile(); });
+
+  document.getElementById('avatarInput').addEventListener('change', e=>{
+    const f = e.target.files[0];
+    if(!f) return;
+    if(state.avatarUrl) URL.revokeObjectURL(state.avatarUrl);
+    state.avatarUrl = URL.createObjectURL(f);
+    document.getElementById('avatarHint').textContent = f.name;
+    renderProfile();
+  });
+
+  const PLATFORMS = ["discord","github","youtube","twitch","spotify","tiktok","custom"];
+  const linkRows = document.getElementById('linkRows');
+  const linkCount = document.getElementById('linkCount');
+  const addLinkBtn = document.getElementById('addLinkBtn');
+
+  function renderLinkRows(){
+    linkRows.innerHTML = "";
+    state.links.forEach((link, i)=>{
+      const row = document.createElement('div');
+      row.className = 'link-row';
+      const sel = document.createElement('select');
+      PLATFORMS.forEach(p=>{
+        const o = document.createElement('option');
+        o.value = p; o.textContent = p[0].toUpperCase()+p.slice(1);
+        if(p === link.platform) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener('change', ()=>{ link.platform = sel.value; renderProfile(); });
+
+      const labelInput = document.createElement('input');
+      labelInput.type = 'text'; labelInput.value = link.label; labelInput.placeholder='Label';
+      labelInput.addEventListener('input', ()=>{ link.label = labelInput.value; renderProfile(); });
+
+      const del = document.createElement('button');
+      del.textContent = '✕'; del.type='button';
+      del.addEventListener('click', ()=>{ state.links.splice(i,1); renderLinkRows(); renderProfile(); updateLinkCount(); });
+
+      row.appendChild(sel); row.appendChild(labelInput); row.appendChild(del);
+      linkRows.appendChild(row);
+    });
+    updateLinkCount();
+  }
+
+  function updateLinkCount(){
+    const max = state.pro ? PRO_LINK_MAX : FREE_LINK_MAX;
+    linkCount.textContent = '('+state.links.length+'/'+max+(state.pro?' pro':' free')+')';
+    addLinkBtn.disabled = state.links.length >= max;
+    addLinkBtn.textContent = state.links.length >= max && !state.pro ? '+ Upgrade for more links' : '+ Add a link';
+  }
+
+  addLinkBtn.addEventListener('click', ()=>{
+    const max = state.pro ? PRO_LINK_MAX : FREE_LINK_MAX;
+    if(state.links.length >= max){ openUpgradeModal(); return; }
+    state.links.push({platform:'custom', label:'New link', url:'#'});
+    renderLinkRows(); renderProfile();
+  });
+
+  document.getElementById('themeOpts').addEventListener('click', e=>{
+    const btn = e.target.closest('.opt'); if(!btn) return;
+    document.querySelectorAll('#themeOpts .opt').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.theme = btn.dataset.theme;
+    applyTheme();
+  });
+
+  const accentSwatches = document.getElementById('accentSwatches');
+  ACCENTS.forEach((c,i)=>{
+    const s = document.createElement('div');
+    s.className = 'swatch' + (i===0 ? ' active':'');
+    s.style.background = c;
+    s.addEventListener('click', ()=>{
+      if(!state.pro){ openUpgradeModal(); return; }
+      document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));
+      s.classList.add('active');
+      state.accent = c;
+    });
+    accentSwatches.appendChild(s);
+  });
+
+  function applyTheme(){
+    const stage = document.getElementById('previewStage');
+    stage.classList.toggle('stage-paper', state.theme === 'paper');
+    startFx(state.fx);
+  }
+
+  const stage = document.getElementById('previewStage');
+  const cursorEl = document.getElementById('customCursor');
+  const trailLayer = document.getElementById('trailLayer');
+  let trailDots = [], trailRaf = null, mouseX=0, mouseY=0;
+
+  function buildTrail(){
+    trailLayer.innerHTML = '';
+    trailDots = [];
+    for(let i=0;i<10;i++){
+      const d = document.createElement('div');
+      d.className = 'trail-dot';
+      trailLayer.appendChild(d);
+      trailDots.push({el:d, x:0, y:0});
+    }
+  }
+  function trailTick(){
+    let px = mouseX, py = mouseY;
+    trailDots.forEach((d,i)=>{
+      d.x += (px - d.x) * 0.35;
+      d.y += (py - d.y) * 0.35;
+      d.el.style.left = d.x + 'px';
+      d.el.style.top = d.y + 'px';
+      d.el.style.opacity = state.cursor === 'trail' ? (1 - i/trailDots.length)*0.8 : 0;
+      d.el.style.transform = 'translate(-50%,-50%) scale('+(1 - i/trailDots.length*0.7)+')';
+      px = d.x; py = d.y;
+    });
+    trailRaf = requestAnimationFrame(trailTick);
+  }
+  buildTrail();
+  if(!reducedMotion) trailTick();
+
+  document.getElementById('cursorOpts').addEventListener('click', e=>{
+    const btn = e.target.closest('.opt'); if(!btn) return;
+    document.querySelectorAll('#cursorOpts .opt').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.cursor = btn.dataset.cursor;
+    cursorEl.className = '';
+    if(state.cursor === 'system' || state.cursor === 'trail'){
+      stage.style.cursor = state.cursor === 'trail' ? 'none' : 'auto';
+      cursorEl.style.opacity = 0;
+    } else {
+      stage.style.cursor = 'none';
+      cursorEl.classList.add(state.cursor === 'dot' ? 'dot' : state.cursor === 'link' ? 'link' : '');
+    }
+  });
+
+  stage.addEventListener('mousemove', e=>{
+    const rect = stage.getBoundingClientRect();
+    mouseX = e.clientX - rect.left; mouseY = e.clientY - rect.top;
+    if(state.cursor === 'system' || state.cursor === 'trail' || !state.pro) return;
+    cursorEl.style.left = mouseX + 'px';
+    cursorEl.style.top = mouseY + 'px';
+    cursorEl.style.opacity = 1;
+  });
+  stage.addEventListener('mouseleave', ()=>{ cursorEl.style.opacity = 0; });
+
+  const canvas = document.getElementById('fxCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [], rafId = null;
+
+  function sizeCanvas(){ canvas.width = stage.clientWidth; canvas.height = stage.clientHeight; }
+  window.addEventListener('resize', sizeCanvas);
+
+  function makeParticles(mode){
+    particles = [];
+    const w = canvas.width, h = canvas.height;
+    if(mode === 'snow'){
+      for(let i=0;i<70;i++) particles.push({x:Math.random()*w,y:Math.random()*h,r:1+Math.random()*2.4,vy:.4+Math.random()*.8,vx:(Math.random()-.5)*.4});
+    } else if(mode === 'stars'){
+      for(let i=0;i<90;i++) particles.push({x:Math.random()*w,y:Math.random()*h,r:.5+Math.random()*1.4,a:Math.random(),d:(Math.random()>.5?1:-1)*(.005+Math.random()*.01)});
+    } else if(mode === 'rain'){
+      for(let i=0;i<40;i++) particles.push({x:Math.random()*w,y:Math.random()*h,len:10+Math.random()*20,vy:3+Math.random()*4});
+    }
+  }
+
+  function fxColor(baseAlpha){
+    const paper = state.theme === 'paper';
+    return paper ? 'rgba(10,10,10,'+baseAlpha+')' : 'rgba(255,255,255,'+baseAlpha+')';
+  }
+
+  function tick(){
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0,0,w,h);
+    if(state.fx === 'snow'){
+      ctx.fillStyle = fxColor(.7);
+      particles.forEach(p=>{
+        p.y += p.vy; p.x += p.vx;
+        if(p.y > h) p.y = -4;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      });
+    } else if(state.fx === 'stars'){
+      particles.forEach(p=>{
+        p.a += p.d;
+        if(p.a<=0||p.a>=1) p.d*=-1;
+        ctx.fillStyle = fxColor(Math.max(0,p.a));
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      });
+    } else if(state.fx === 'rain'){
+      ctx.strokeStyle = fxColor(.45);
+      ctx.lineWidth = 1;
+      particles.forEach(p=>{
+        p.y += p.vy;
+        if(p.y > h) p.y = -20;
+        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x,p.y+p.len); ctx.stroke();
+      });
+    }
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function startFx(mode){
+    cancelAnimationFrame(rafId);
+    if(!canvas.width) sizeCanvas();
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(mode === 'none' || !state.pro) return;
+    sizeCanvas();
+    makeParticles(mode);
+    tick();
+  }
+
+  document.getElementById('fxOpts').addEventListener('click', e=>{
+    const btn = e.target.closest('.opt'); if(!btn) return;
+    document.querySelectorAll('#fxOpts .opt').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.fx = btn.dataset.fx;
+    startFx(state.fx);
+  });
+
+  let audioEl = null;
+  const musicInput = document.getElementById('musicInput');
+  const musicNow = document.getElementById('musicNow');
+  const player = document.getElementById('musicPlayer');
+  const playBtn = document.getElementById('playBtn');
+  const playerTitle = document.getElementById('playerTitle');
+  const eq = document.getElementById('eq');
+
+  musicInput.addEventListener('change', e=>{
+    const f = e.target.files[0];
+    if(!f) return;
+    if(audioEl){ audioEl.pause(); URL.revokeObjectURL(audioEl.src); }
+    audioEl = new Audio(URL.createObjectURL(f));
+    audioEl.loop = true;
+    state.musicName = f.name;
+    musicNow.style.display = 'flex';
+    musicNow.textContent = '♪ ' + f.name;
+    player.style.display = 'flex';
+    playerTitle.textContent = f.name;
+    playBtn.textContent = '▶';
+    eq.classList.remove('playing');
+  });
+
+  playBtn.addEventListener('click', ()=>{
+    if(!audioEl) return;
+    if(audioEl.paused){ audioEl.play(); playBtn.textContent='❚❚'; eq.classList.add('playing'); }
+    else { audioEl.pause(); playBtn.textContent='▶'; eq.classList.remove('playing'); }
+  });
+
+  const DISCORD_FLAGS = [
+    {bit:1<<0, name:"Staff"}, {bit:1<<1, name:"Partner"},
+    {bit:1<<2, name:"HypeSquad Events"}, {bit:1<<3, name:"Bug Hunter"},
+    {bit:1<<9, name:"Early Supporter"}, {bit:1<<14, name:"Bug Hunter II"},
+    {bit:1<<17, name:"Verified Bot Dev"}, {bit:1<<22, name:"Active Developer"}
+  ];
+
+  function badgeSvg(){
+    return '<svg viewBox="0 0 24 24" fill="currentColor" style="color:currentColor"><path d="M12 2l2.4 6.6L21 10l-5 4.4L17.4 21 12 17.3 6.6 21 8 14.4 3 10l6.6-1.4z"/></svg>';
+  }
+
+  function renderDiscordBadges(){
+    const wrap = document.getElementById('previewBadges');
+    const flag = document.getElementById('demoFlag');
+    if(!state.discord){ wrap.style.display='none'; flag.style.display='none'; return; }
+    wrap.innerHTML = '';
+    const flags = state.discord.flags || [];
+    flags.forEach(f=>{
+      const b = document.createElement('div'); b.className='badge'; b.title=f; b.innerHTML = badgeSvg();
+      wrap.appendChild(b);
+    });
+    if(!flags.length){
+      const b = document.createElement('div'); b.className='badge'; b.title='Discord connected'; b.innerHTML = badgeSvg();
+      wrap.appendChild(b);
+    }
+    wrap.style.display = 'flex';
+    flag.style.display = state.discordDemo ? 'block' : 'none';
+  }
+
+  function decodeFlags(bitfield){
+    return DISCORD_FLAGS.filter(f => (bitfield & f.bit) === f.bit).map(f=>f.name);
+  }
+
+  async function finishDiscordLogin(token){
+    try{
+      const res = await fetch('https://discord.com/api/users/@me', {headers:{Authorization:'Bearer '+token}});
+      if(!res.ok) throw new Error('auth failed');
+      const u = await res.json();
+      const avatar = u.avatar ? ('https://cdn.discordapp.com/avatars/'+u.id+'/'+u.avatar+'.png?size=128') : null;
+      state.discord = { username: u.global_name || u.username, handle: u.username, avatar, flags: decodeFlags(u.public_flags || 0) };
+      state.discordDemo = false;
+      applyDiscordToProfile();
+    }catch(err){
+      alert('Discord connect failed — check that your Client ID and redirect URL are set up correctly in the Discord developer portal.');
+    }
+  }
+
+  function applyDiscordToProfile(){
+    document.getElementById('discordDisconnected').style.display = 'none';
+    document.getElementById('discordConnected').style.display = 'block';
+    if(state.discord.avatar) state.avatarUrl = state.discord.avatar;
+    nameInput.value = state.discord.username;
+    userInput.value = slug(state.discord.handle);
+    state.name = state.discord.username;
+    state.user = slug(state.discord.handle);
+    renderProfile();
+    renderDiscordBadges();
+  }
+
+  document.getElementById('discordConnectBtn').addEventListener('click', ()=>{
+    const clientId = document.getElementById('clientIdInput').value.trim();
+    if(!clientId){ alert("Add your Discord app's Client ID above first (or use the demo preview)."); return; }
+    const redirect = encodeURIComponent(window.location.href.split('#')[0]);
+    const url = 'https://discord.com/api/oauth2/authorize?client_id='+encodeURIComponent(clientId)+'&redirect_uri='+redirect+'&response_type=token&scope=identify';
+    window.location.href = url;
+  });
+
+  document.getElementById('discordDemoBtn').addEventListener('click', ()=>{
+    state.discord = { username: 'Ark', handle:'ark.dev', avatar:null, flags: ['Early Supporter','Active Developer'] };
+    state.discordDemo = true;
+    applyDiscordToProfile();
+  });
+
+  document.getElementById('discordDisconnectBtn').addEventListener('click', ()=>{
+    state.discord = null; state.discordDemo = false;
+    document.getElementById('discordDisconnected').style.display = 'block';
+    document.getElementById('discordConnected').style.display = 'none';
+    renderDiscordBadges();
+  });
+
+  (function checkOAuthReturn(){
+    const hash = window.location.hash;
+    if(hash && hash.includes('access_token')){
+      const params = new URLSearchParams(hash.slice(1));
+      const token = params.get('access_token');
+      if(token){
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+        if(state.pro) finishDiscordLogin(token);
+      }
+    }
+  })();
+
+  const PLATFORM_ICON = { discord:'◆', github:'○', youtube:'▶', twitch:'▣', spotify:'◐', tiktok:'▲', custom:'—' };
+
+  function renderProfile(){
+    document.getElementById('previewName').firstChild.textContent = state.name + ' ';
+    document.getElementById('previewUser').textContent = '@' + state.user;
+    document.getElementById('previewBio').textContent = state.bio;
+    addressBar.textContent = 'accountbooks.com/' + state.user;
+
+    const avatarBox = document.getElementById('previewAvatar');
+    if(state.avatarUrl){ avatarBox.innerHTML = '<img src="'+state.avatarUrl+'" alt="">'; }
+    else { avatarBox.textContent = (state.name[0] || '?').toUpperCase(); }
+
+    const linksBox = document.getElementById('previewLinks');
+    linksBox.innerHTML = '';
+    state.links.forEach(l=>{
+      const a = document.createElement('a');
+      a.href = l.url || '#'; a.className = 'profile-link'; a.target='_blank'; a.rel='noopener';
+      a.innerHTML = '<span class="pl-icon">'+(PLATFORM_ICON[l.platform]||'—')+'</span><span class="pl-label">'+(l.label || l.platform)+'</span><span class="pl-arrow">↗</span>';
+      linksBox.appendChild(a);
+    });
+
+    document.getElementById('watermark').style.display = state.pro ? 'none' : 'flex';
+    document.getElementById('proTag').style.display = state.pro ? 'inline-block' : 'none';
+  }
+
+  const upgradeBar = document.getElementById('upgradeBar');
+  function updateProGating(){
+    document.querySelectorAll('[data-lock]').forEach(el=>{ el.style.display = state.pro ? 'none' : 'inline'; });
+    document.getElementById('planPillText').textContent = state.pro ? 'Pro plan' : 'Free plan';
+    document.getElementById('planPill').classList.toggle('is-pro', state.pro);
+
+    document.getElementById('cursorLocked').style.display = state.pro ? 'none' : 'block';
+    document.getElementById('cursorUnlocked').style.display = state.pro ? 'block' : 'none';
+    document.getElementById('fxLocked').style.display = state.pro ? 'none' : 'block';
+    document.getElementById('fxUnlocked').style.display = state.pro ? 'block' : 'none';
+    document.getElementById('musicLocked').style.display = state.pro ? 'none' : 'block';
+    document.getElementById('musicUnlocked').style.display = state.pro ? 'block' : 'none';
+    document.getElementById('discordLocked').style.display = state.pro ? 'none' : 'block';
+    document.getElementById('discordUnlocked').style.display = state.pro ? 'block' : 'none';
+
+    if(state.pro){
+      upgradeBar.classList.add('pro-on');
+      upgradeBar.querySelector('.l').innerHTML = "You're on the <b>Pro</b> plan.";
+      upgradeBar.querySelector('button').textContent = 'Manage plan';
+    } else {
+      upgradeBar.classList.remove('pro-on');
+      upgradeBar.querySelector('.l').innerHTML = "You're on the <b>Free</b> plan — cursors, effects, music and Discord are Pro.";
+      upgradeBar.querySelector('button').textContent = 'Upgrade — €2/mo';
+      if(state.cursor !== 'system'){ state.cursor='system'; stage.style.cursor='auto'; cursorEl.style.opacity=0; document.querySelectorAll('#cursorOpts .opt').forEach(b=>b.classList.toggle('active', b.dataset.cursor==='system')); }
+      if(state.fx !== 'none'){ state.fx='none'; document.querySelectorAll('#fxOpts .opt').forEach(b=>b.classList.toggle('active', b.dataset.fx==='none')); startFx('none'); }
+    }
+    updateLinkCount();
+    renderProfile();
+  }
+
+  function openUpgradeModal(){ document.getElementById('upgradeModal').classList.add('open'); }
+  function closeUpgradeModal(){ document.getElementById('upgradeModal').classList.remove('open'); }
+
+  ['upgradeBarBtn','cursorUpgradeBtn','fxUpgradeBtn','musicUpgradeBtn','discordUpgradeBtn','proStartBtn'].forEach(id=>{
+    document.getElementById(id).addEventListener('click', ()=>{
+      if(state.pro && id==='upgradeBarBtn'){
+        if(confirm('Downgrade to Free? This will lock Pro features again.')){ state.pro=false; updateProGating(); }
+        return;
+      }
+      openUpgradeModal();
+    });
+  });
+  document.getElementById('upgradeCancel').addEventListener('click', closeUpgradeModal);
+  document.getElementById('upgradeModal').addEventListener('click', e=>{ if(e.target.id==='upgradeModal') closeUpgradeModal(); });
+  document.getElementById('upgradeConfirm').addEventListener('click', ()=>{
+    state.pro = true;
+    updateProGating();
+    closeUpgradeModal();
+  });
+  document.getElementById('freeStartBtn').addEventListener('click', ()=>{
+    document.querySelector('#studio').scrollIntoView({behavior: reducedMotion ? 'auto' : 'smooth'});
+  });
+
+  const modal = document.getElementById('createModal');
+  function openModal(){ modal.classList.add('open'); document.getElementById('claimInput').focus(); }
+  function closeModal(){ modal.classList.remove('open'); }
+  document.getElementById('navCreateBtn').addEventListener('click', e=>{ e.preventDefault(); openModal(); });
+  document.getElementById('claimCancel').addEventListener('click', closeModal);
+  modal.addEventListener('click', e=>{ if(e.target === modal) closeModal(); });
+  document.getElementById('claimGo').addEventListener('click', ()=>{
+    const v = document.getElementById('claimInput').value.trim();
+    if(v){ userInput.value = slug(v); state.user = slug(v); renderProfile(); }
+    closeModal();
+  });
+
+  renderLinkRows();
+  renderProfile();
+  applyTheme();
+  sizeCanvas();
+  updateProGating();
+})();
+</script>
+</body>
+</html>
