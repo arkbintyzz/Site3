@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio — AccountBooks</title>
+<meta name="description" content="Build your AccountBooks profile: theme, cursor, effects, MP3 player and Discord connect.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,380;0,9..144,500;0,9..144,600;1,9..144,400&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="background"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div><div class="grid"></div><div class="grain"></div></div>
+
+<!-- NAVIGATION -->
+<nav class="glass">
+  <a href="index.html" class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 3h14c1.1 0 2 .9 2 2v14c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2z" fill="#000"/>
+        <path d="M5 17h14v2H5zM9 8h6v6H9z" fill="#333"/>
+        <path d="M9 10l3 3 3-3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="brand-word">AccountBooks</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html#features">Features</a>
+    <a href="index.html#pricing">Pricing</a>
+    <div class="plan-pill" id="planPill"><span class="dot"></span><span id="planPillText">Free plan</span></div>
+    <a href="index.html" class="nav-create">← Back to home</a>
+  </div>
+</nav>
+
+<!-- STUDIO -->
+<section class="studio-page-shell" id="studio" style="margin-top:60px;">
+  <div class="section-heading">
+    <div class="eyebrow">Live studio</div>
+    <h2>Build it, watch it update.</h2>
+    <p>Everything previews instantly on the right. Your edits stay local — nothing is uploaded anywhere yet.</p>
+  </div>
+
+  <div class="studio">
+    <div class="upgrade-bar glass" id="upgradeBar">
+      <div class="l">You're on the <b>Free</b> plan — cursors, effects, music and Discord are Pro.</div>
+      <button id="upgradeBarBtn">Upgrade — €2/mo</button>
+    </div>
+
+    <!-- EDITOR PANEL -->
+    <div class="panel">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="profile">Profile</button>
+        <button class="tab-btn" data-tab="theme">Theme</button>
+        <button class="tab-btn" data-tab="cursor">Cursor <span class="lock" data-lock>🔒</span></button>
+        <button class="tab-btn" data-tab="fx">Effects <span class="lock" data-lock>🔒</span></button>
+        <button class="tab-btn" data-tab="music">Music <span class="lock" data-lock>🔒</span></button>
+        <button class="tab-btn" data-tab="discord">Discord <span class="lock" data-lock>🔒</span></button>
+      </div>
+
+      <!-- PROFILE TAB -->
+      <div class="tab-body active" data-tab="profile">
+        <div class="field">
+          <label>Avatar</label>
+          <div class="avatar-upload">
+            <label class="up">Upload image
+              <input type="file" id="avatarInput" accept="image/*">
+            </label>
+            <span class="hint" id="avatarHint">or use your initial</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Display name</label>
+          <input type="text" id="nameInput" value="Ark" maxlength="40">
+        </div>
+        <div class="field">
+          <label>Username</label>
+          <input type="text" id="userInput" value="ark" maxlength="30">
+        </div>
+        <div class="field">
+          <label>Bio</label>
+          <textarea id="bioInput" rows="3" maxlength="140">Developer · Creator · Gamer</textarea>
+        </div>
+        <div class="field">
+          <label>Links <span id="linkCount" style="color:#666;">(4/4 free)</span></label>
+          <div id="linkRows"></div>
+          <button class="add-link-btn" id="addLinkBtn">+ Add link</button>
+        </div>
+      </div>
+
+      <!-- THEME TAB -->
+      <div class="tab-body" data-tab="theme">
+        <div class="field">
+          <label>Page contrast</label>
+          <div class="opt-row" id="themeOpts">
+            <button class="opt active" data-theme="ink">Ink (dark)</button>
+            <button class="opt" data-theme="paper">Paper (light)</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Accent shade <span class="lock" data-lock>🔒 Pro</span></label>
+          <div class="swatches" id="accentSwatches"></div>
+          <p class="hint">Fine-tune the grey used on interactive elements.</p>
+        </div>
+      </div>
+
+      <!-- CURSOR TAB -->
+      <div class="tab-body" data-tab="cursor">
+        <div id="cursorLocked" class="locked-panel">
+          <div class="lk-icon">🎯</div>
+          <p>Custom cursors are a Pro feature. Choose from ring, dot, trail, or chain-link styles.</p>
+          <button id="cursorUpgradeBtn">Upgrade — €2/mo</button>
+        </div>
+        <div id="cursorUnlocked" style="display:none;">
+          <div class="field">
+            <label>Cursor style</label>
+            <div class="opt-row" id="cursorOpts">
+              <button class="opt active" data-cursor="system">System</button>
+              <button class="opt" data-cursor="ring">Ring</button>
+              <button class="opt" data-cursor="dot">Dot</button>
+              <button class="opt" data-cursor="trail">Trail</button>
+              <button class="opt" data-cursor="link">Chain link</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EFFECTS TAB -->
+      <div class="tab-body" data-tab="fx">
+        <div id="fxLocked" class="locked-panel">
+          <div class="lk-icon">✨</div>
+          <p>Ambient effects are a Pro feature. Add quiet motion: snow, stardust, or digital rain.</p>
+          <button id="fxUpgradeBtn">Upgrade — €2/mo</button>
+        </div>
+        <div id="fxUnlocked" style="display:none;">
+          <div class="field">
+            <label>Background effect</label>
+            <div class="opt-row" id="fxOpts">
+              <button class="opt active" data-fx="none">None</button>
+              <button class="opt" data-fx="snow">Snow</button>
+              <button class="opt" data-fx="stars">Stardust</button>
+              <button class="opt" data-fx="rain">Digital rain</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MUSIC TAB -->
+      <div class="tab-body" data-tab="music">
+        <div id="musicLocked" class="locked-panel">
+          <div class="lk-icon">♫</div>
+          <p>The MP3 player is a Pro feature. Add a theme song with a live mini player.</p>
+          <button id="musicUpgradeBtn">Upgrade — €2/mo</button>
+        </div>
+        <div id="musicUnlocked" style="display:none;">
+          <div class="field">
+            <label>Profile track</label>
+            <label class="music-drop" for="musicInput">
+              Click to upload an MP3<br><span style="color:#777; font-size:11px;">Plays on your profile</span>
+              <input type="file" id="musicInput" accept="audio/*">
+            </label>
+            <div class="music-now" id="musicNow" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DISCORD TAB -->
+      <div class="tab-body" data-tab="discord">
+        <div id="discordLocked" class="locked-panel">
+          <div class="lk-icon">💬</div>
+          <p>Discord connect is a Pro feature. Show your live username, avatar, status and badges.</p>
+          <button id="discordUpgradeBtn">Upgrade — €2/mo</button>
+        </div>
+        <div id="discordUnlocked" style="display:none;">
+          <div class="field" id="discordDisconnected">
+            <label>Connect your Discord</label>
+            <p class="hint" style="margin-bottom:14px;">Real Discord OAuth (identify scope) — no backend or client secret required.</p>
+            <button class="discord-btn" id="discordConnectBtn">
+              <svg viewBox="0 0 127.14 96.36" fill="currentColor"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83,99.68,99.68,0,0,0-30.22,0A72.37,72.37,0,0,0,45.67,0,105.89,105.89,0,0,0,19.44,8.07,105.09,105.09,0,0,0,2.84,80.37a104.88,104.88,0,0,0,32.88,16.07,77.64,77.64,0,0,0,6.73-10.92,63.51,63.51,0,0,1-10.86-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a63.52,63.52,0,0,1-10.87,5.19,77.16,77.16,0,0,0,6.73,10.92,104.74,104.74,0,0,0,32.88-16.07,105.27,105.27,0,0,0-17.6-72.3ZM42.45,65.69C36.18,65.69,31,60.6,31,54s5-11.74,11.43-11.74c6.47,0,11.74,5.29,11.37,11.74,0,6.56-5.37,11.69-11.35,11.69Zm42.24,0C78.41,65.69,73.25,60.6,73.25,54s5-11.74,11.44-11.74c6.47,0,11.74,5.29,11.37,11.74,0,6.56-5.37,11.69-11.37,11.69Z"/></svg>
+              Connect with Discord
+            </button>
+            <button class="demo-btn" id="discordDemoBtn">Preview with demo data</button>
+            <div class="field" style="margin-top:16px;">
+              <label>Your OAuth Client ID (optional)</label>
+              <input type="text" id="clientIdInput" placeholder="Paste your Discord Client ID">
+              <p class="hint">Register a free app at discord.com/developers, add this page's URL as a redirect, set scope to <code>identify</code>.</p>
+            </div>
+          </div>
+          <div id="discordConnected" style="display:none;">
+            <p class="hint" style="margin-bottom:12px;">✓ Connected — your Discord data is now live on your profile.</p>
+            <button class="disconnect-btn" id="discordDisconnectBtn">Disconnect Discord</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="browser">
+      <div class="browser-top">
+        <div class="browser-dots"><span></span><span></span><span></span></div>
+        <div class="address" id="addressBar">accountbooks.com/ark</div>
+      </div>
+      <div id="previewStage">
+        <canvas id="fxCanvas"></canvas>
+        <div id="customCursor"></div>
+        <div id="trailLayer"></div>
+        <div class="profile-card glass">
+          <div class="avatar-ring" id="avatarRing">
+            <div class="avatar-ring-mask">
+              <div class="profile-avatar" id="previewAvatar">A</div>
+            </div>
+            <div class="status-dot" id="statusDot"></div>
+          </div>
+          <div class="profile-name" id="previewName">Ark <span class="pro-tag" id="proTag" style="display:none;">PRO</span></div>
+          <div class="profile-username" id="previewUser">@ark</div>
+          <div class="view-count"><span class="p"></span><span id="viewCountText">12,482 views</span></div>
+          <div class="badges" id="previewBadges" style="display:none;"></div>
+          <div class="demo-flag" id="demoFlag" style="display:none;">Demo Discord data</div>
+          <div class="profile-bio" id="previewBio">Developer · Creator · Gamer</div>
+          <div class="player" id="musicPlayer" style="display:none;">
+            <button id="playBtn">▶</button>
+            <div class="title" id="playerTitle">track.mp3</div>
+            <div class="eq" id="eq"><span></span><span></span><span></span></div>
+          </div>
+          <div class="profile-links" id="previewLinks"></div>
+          <div class="watermark" id="watermark"><span>✦</span> MADE WITH ACCOUNTBOOKS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>© 2026 ACCOUNTBOOKS</div>
+  <div><a href="index.html#features">Features</a><a href="index.html#pricing">Pricing</a><a href="index.html">Home</a></div>
+</footer>
+
+<!-- UPGRADE MODAL -->
+<div class="modal-overlay" id="upgradeModal">
+  <div class="modal">
+    <h3>Upgrade to Pro</h3>
+    <div class="price-line">€2 <span>/ month</span></div>
+    <p>Unlock all Pro features:</p>
+    <ul>
+      <li>Custom cursors — ring, dot, trail, chain link</li>
+      <li>Ambient effects — snow, stardust, digital rain</li>
+      <li>MP3 player with live mini player</li>
+      <li>Discord connect with status &amp; real badges</li>
+      <li>Up to 10 links on your profile</li>
+      <li>Remove the AccountBooks watermark</li>
+    </ul>
+    <p style="margin-top:12px; font-size:12px;">This is a demo. "Simulate" just unlocks Pro so you can try everything.</p>
+    <div class="modal-actions">
+      <button class="button button-secondary" id="upgradeCancel">Maybe later</button>
+      <button class="button button-primary" id="upgradeConfirm">Simulate upgrade</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const state = {
+    name: "Ark", user: "ark", bio: "Developer · Creator · Gamer",
+    avatarUrl: "", theme: "ink", accent: "#ffffff",
+    cursor: "system", fx: "none",
+    links: [
+      {platform:"discord", label:"Discord", url:"#"},
+      {platform:"github", label:"GitHub", url:"#"},
+      {platform:"youtube", label:"YouTube", url:"#"},
+      {platform:"custom", label:"My Projects", url:"#"}
+    ],
+    musicName:"", pro:false,
+    discord: null, discordDemo:false
+  };
+
+  const ACCENTS = ["#ffffff","#d9d9d9","#b0b0b0","#7a7a7a","#4a4a4a"];
+  const FREE_LINK_MAX = 4, PRO_LINK_MAX = 10;
+
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.tab-body').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelector('.tab-body[data-tab="'+btn.dataset.tab+'"]').classList.add('active');
+    });
+  });
+
+  const nameInput = document.getElementById('nameInput');
+  const userInput = document.getElementById('userInput');
+  const bioInput = document.getElementById('bioInput');
+  const addressBar = document.getElementById('addressBar');
+
+  function slug(v){ return v.toLowerCase().replace(/[^a-z0-9_]/g,'').slice(0,30) || 'you'; }
+
+  nameInput.addEventListener('input', ()=>{ state.name = nameInput.value || 'You'; renderProfile(); });
+  userInput.addEventListener('input', ()=>{ state.user = slug(userInput.value); renderProfile(); });
+  bioInput.addEventListener('input', ()=>{ state.bio = bioInput.value; renderProfile(); });
+
+  document.getElementById('avatarInput').addEventListener('change', e=>{
+    const f = e.target.files[0];
+    if(!f) return;
+    if(state.avatarUrl) URL.revokeObjectURL(state.avatarUrl);
+    state.avatarUrl = URL.createObjectURL(f);
+    document.getElementById('avatarHint').textContent = f.name;
+    renderProfile();
+  });
+
+  const PLATFORMS = ["discord","github","youtube","twitch","spotify","tiktok","custom"];
+  const PLATFORM_ICONS = {
+    discord: '<svg viewBox="0 0 127.14 96.36" fill="currentColor"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83,99.68,99.68,0,0,0-30.22,0A72.37,72.37,0,0,0,45.67,0,105.89,105.89,0,0,0,19.44,8.07,105.09,105.09,0,0,0,2.84,80.37a104.88,104.88,0,0,0,32.88,16.07,77.64,77.64,0,0,0,6.73-10.92,63.51,63.51,0,0,1-10.86-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a63.52,63.52,0,0,1-10.87,5.19,77.16,77.16,0,0,0,6.73,10.92,104.74,104.74,0,0,0,32.88-16.07,105.27,105.27,0,0,0-17.6-72.3ZM42.45,65.69C36.18,65.69,31,60.6,31,54s5-11.74,11.43-11.74c6.47,0,11.74,5.29,11.37,11.74,0,6.56-5.37,11.69-11.35,11.69Zm42.24,0C78.41,65.69,73.25,60.6,73.25,54s5-11.74,11.44-11.74c6.47,0,11.74,5.29,11.37,11.74,0,6.56-5.37,11.69-11.37,11.69Z"/></svg>',
+    github: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.868-.013-1.703-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.546 2.914 1.186.092-.923.35-1.546.636-1.903-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.137 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>',
+    youtube: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.175c-3.674-.576-11.556-.576-15.23 0-4.124.648-4.887 4.059-4.887 8.825 0 4.766.763 8.177 4.887 8.825 3.674.576 11.556.576 15.23 0 4.124-.648 4.887-4.059 4.887-8.825 0-4.766-.763-8.177-4.887-8.825zm-10.615 12.582v-8.414l6.267 4.207-6.267 4.207z"/></svg>',
+    twitch: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 2H2v16h5v4l4-4h5l7-7V2h-5v8l-3 3H8V2z"/></svg>',
+    spotify: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/><path d="M9.5 10c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5v3c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5v-3zm5 0c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5v4c0 .828-.672 1.5-1.5 1.5s-1.5-.672-1.5-1.5v-4z" fill="#191414"/></svg>',
+    tiktok: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.66 1.94 2.89 2.89 0 0 1 5.66-1.93v-3.28a6.47 6.47 0 0 0-5.66 3.26v-4.53a4.33 4.33 0 0 0-1.41-.25A4.33 4.33 0 0 0 8 17.69a4.16 4.16 0 0 0 3.44 1.61 4.18 4.18 0 0 0 1.57-.3v-3.1a7.98 7.98 0 0 0 1.58.15 4.48 4.48 0 0 0 4-4.3V6.93a6.86 6.86 0 0 0 1.52 1.64v-3.6a5.1 5.1 0 0 1-.88-.57z"/></svg>',
+    custom: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5c-1 0-3 2-3 7s2 7 3 7 3-2 3-7-2-7-3-7z"/><circle cx="12" cy="12" r="10"/></svg>'
+  };
+
+  const linkRows = document.getElementById('linkRows');
+  const linkCount = document.getElementById('linkCount');
+  const addLinkBtn = document.getElementById('addLinkBtn');
+
+  function renderLinkRows(){
+    linkRows.innerHTML = "";
+    state.links.forEach((link, i)=>{
+      const row = document.createElement('div');
+      row.className = 'link-row';
+      const sel = document.createElement('select');
+      PLATFORMS.forEach(p=>{
+        const o = document.createElement('option');
+        o.value = p; o.textContent = p[0].toUpperCase()+p.slice(1);
+        if(p === link.platform) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener('change', ()=>{ link.platform = sel.value; renderProfile(); });
+
+      const labelInput = document.createElement('input');
+      labelInput.type = 'text'; labelInput.value = link.label; labelInput.placeholder='Label';
+      labelInput.addEventListener('input', ()=>{ link.label = labelInput.value; renderProfile(); });
+
+      const del = document.createElement('button');
+      del.textContent = '✕'; del.type='button';
+      del.addEventListener('click', ()=>{ state.links.splice(i,1); renderLinkRows(); renderProfile(); updateLinkCount(); });
+
+      row.appendChild(sel); row.appendChild(labelInput); row.appendChild(del);
+      linkRows.appendChild(row);
+    });
+    updateLinkCount();
+  }
+
+  function updateLinkCount(){
+    const max = state.pro ? PRO_LINK_MAX : FREE_LINK_MAX;
+    linkCount.textContent = '('+state.links.length+'/'+max+(state.pro?' pro':' free')+')';
+    addLinkBtn.disabled = state.links.length >= max;
+    addLinkBtn.textContent = state.links.length >= max && !state.pro ? '+ Upgrade for more' : '+ Add link';
+  }
+
+  addLinkBtn.addEventListener('click', ()=>{
+    const max = state.pro ? PRO_LINK_MAX : FREE_LINK_MAX;
+    if(state.links.length >= max){ openUpgradeModal(); return; }
+    state.links.push({platform:'custom', label:'New link', url:'#'});
+    renderLinkRows(); renderProfile();
+  });
+
+  document.getElementById('themeOpts').addEventListener('click', e=>{
+    const btn = e.target.closest('.opt'); if(!btn) return;
+    document.querySelectorAll('#themeOpts .opt').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.theme = btn.dataset.theme;
+    applyTheme();
+  });
+
+  const accentSwatches = document.getElementById('accentSwatches');
+  ACCENTS.forEach((c,i)=>{
+    const s = document.createElement('div');
+    s.className = 'swatch' + (i===0 ? ' active':'');
+    s.style.background = c;
+    s.addEventListener('click', ()=>{
+      if(!state.pro){ openUpgradeModal(); return; }
+      document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));
+      s.classList.add('active');
+      state.accent = c;
+    });
+    accentSwatches.appendChild(s);
+  });
+
+  function applyTheme(){
+    const stage = document.getElementById('previewStage');
+    stage.classList.toggle('stage-paper', state.theme === 'paper');
+    startFx(state.fx);
+  }
+
+  const stage = document.getElementById('previewStage');
+  const cursorEl = document.getElementById('customCursor');
+  const trailLayer = document.getElementById('trailLayer');
+  let trailDots = [], trailRaf = null, mouseX=0, mouseY=0;
+
+  function buildTrail(){
+    trailLayer.innerHTML = '';
+    trailDots = [];
+    for(let i=0;i<10;i++){
+      const d = document.createElement('div');
+      d.className = 'trail-dot';
+      trailLayer.appendChild(d);
+      trailDots.push({el:d, x:0, y:0});
+    }
+  }
+  function trailTick(){
+    let px = mouseX, py = mouseY;
+    trailDots.forEach((d,i)=>{
+      d.x += (px - d.x) * 0.35;
+      d.y += (py - d.y) * 0.35;
+      d.el.style.left = d.x + 'px';
+      d.el.style.top = d.y + 'px';
+      d.el.style.opacity = state.cursor === 'trail' ? (1 - i/trailDots.length)*0.8 : 0;
+      d.el.style.transform = 'translate(-50%,-50%) scale('+(1 - i/trailDots.length*0.7)+')';
+      px = d.x; py = d.y;
+    });
+    trailRaf = requestAnimationFrame(trailTick);
+  }
+  buildTrail();
+  if(!reducedMotion) trailTick();
+
+  document.getElementById('cursorOpts').addEventListener('click', e=>{
+    const btn = e.target.closest('.opt'); if(!btn) return;
+    document.querySelectorAll('#cursorOpts .opt').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.cursor = btn.dataset.cursor;
+    cursorEl.className = '';
+    if(state.cursor === 'system' || state.cursor === 'trail'){
+      stage.style.cursor = state.cursor === 'trail' ? 'none' : 'auto';
+      cursorEl.style.opacity = 0;
+    } else {
+      stage.style.cursor = 'none';
+      cursorEl.classList.add(state.cursor === 'dot' ? 'dot' : state.cursor === 'link' ? 'link' : '');
+    }
+  });
+
+  stage.addEventListener('mousemove', e=>{
+    const rect = stage.getBoundingClientRect();
+    mouseX = e.clientX - rect.left; mouseY = e.clientY - rect.top;
+    if(state.cursor === 'system' || state.cursor === 'trail' || !state.pro) return;
+    cursorEl.style.left = mouseX + 'px';
+    cursorEl.style.top = mouseY + 'px';
+    cursorEl.style.opacity = 1;
+  });
+  stage.addEventListener('mouseleave', ()=>{ cursorEl.style.opacity = 0; });
+
+  const canvas = document.getElementById('fxCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [], rafId = null;
+
+  function sizeCanvas(){ canvas.width = stage.clientWidth; canvas.height = stage.clientHeight; }
+  window.addEventListener('resize', sizeCanvas);
+
+  function makeParticles(mode){
+    particles = [];
+    const w = canvas.width, h = canvas.height;
+    if(mode === 'snow'){
+      for(let i=0;i<70;i++) particles.push({x:Math.random()*w,y:Math.random()*h,r:1+Math.random()*2.4,vy:.4+Math.random()*.8,vx:(Math.random()-.5)*.4});
+    } else if(mode === 'stars'){
+      for(let i=0;i<90;i++) particles.push({x:Math.random()*w,y:Math.random()*h,r:.5+Math.random()*1.4,a:Math.random(),d:(Math.random()>.5?1:-1)*(.005+Math.random()*.01)});
+    } else if(mode === 'rain'){
+      for(let i=0;i<40;i++) particles.push({x:Math.random()*w,y:Math.random()*h,len:10+Math.random()*20,vy:3+Math.random()*4});
+    }
+  }
+
+  function fxColor(baseAlpha){
+    const paper = state.theme === 'paper';
+    return paper ? 'rgba(10,10,10,'+baseAlpha+')' : 'rgba(255,255,255,'+baseAlpha+')';
+  }
+
+  function tick(){
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0,0,w,h);
+    if(state.fx === 'snow'){
+      ctx.fillStyle = fxColor(.7);
+      particles.forEach(p=>{
+        p.y += p.vy; p.x += p.vx;
+        if(p.y > h) p.y = -4;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      });
+    } else if(state.fx === 'stars'){
+      particles.forEach(p=>{
+        p.a += p.d;
+        if(p.a<=0||p.a>=1) p.d*=-1;
+        ctx.fillStyle = fxColor(Math.max(0,p.a));
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      });
+    } else if(state.fx === 'rain'){
+      ctx.strokeStyle = fxColor(.45);
+      ctx.lineWidth = 1;
+      particles.forEach(p=>{
+        p.y += p.vy;
+        if(p.y > h) p.y = -20;
+        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x,p.y+p.len); ctx.stroke();
+      });
+    }
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function startFx(mode){
+    cancelAnimationFrame(rafId);
+    if(!canvas.width) sizeCanvas();
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(mode === 'none' || !state.pro) return;
+    sizeCanvas();
+    makeParticles(mode);
+    tick();
+  }
+
+  document.getElementById('fxOpts').addEventListener('click', e=>{
+    const btn = e.target.closest('.opt'); if(!btn) return;
+    document.querySelectorAll('#fxOpts .opt').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.fx = btn.dataset.fx;
+    startFx(state.fx);
+  });
+
+  let audioEl = null;
+  const musicInput = document.getElementById('musicInput');
+  const musicNow = document.getElementById('musicNow');
+  const player = document.getElementById('musicPlayer');
+  const playBtn = document.getElementById('playBtn');
+  const playerTitle = document.getElementById('playerTitle');
+  const eq = document.getElementById('eq');
+
+  musicInput.addEventListener('change', e=>{
+    const f = e.target.files[0];
+    if(!f) return;
+    if(audioEl){ audioEl.pause(); URL.revokeObjectURL(audioEl.src); }
+    audioEl = new Audio(URL.createObjectURL(f));
+    audioEl.loop = true;
+    state.musicName = f.name;
+    musicNow.style.display = 'flex';
+    musicNow.textContent = '♪ ' + f.name;
+    player.style.display = 'flex';
+    playerTitle.textContent = f.name;
+    playBtn.textContent = '▶';
+    eq.classList.remove('playing');
+  });
+
+  playBtn.addEventListener('click', ()=>{
+    if(!audioEl) return;
+    if(audioEl.paused){ audioEl.play(); playBtn.textContent='❚❚'; eq.classList.add('playing'); }
+    else { audioEl.pause(); playBtn.textContent='▶'; eq.classList.remove('playing'); }
+  });
+
+  const DISCORD_FLAGS = [
+    {bit:1<<0, name:"Staff"}, {bit:1<<1, name:"Partner"},
+    {bit:1<<2, name:"HypeSquad Events"}, {bit:1<<3, name:"Bug Hunter"},
+    {bit:1<<9, name:"Early Supporter"}, {bit:1<<14, name:"Bug Hunter II"},
+    {bit:1<<17, name:"Verified Bot Dev"}, {bit:1<<22, name:"Active Developer"}
+  ];
+
+  function badgeSvg(){
+    return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.6L21 10l-5 4.4L17.4 21 12 17.3 6.6 21 8 14.4 3 10l6.6-1.4z"/></svg>';
+  }
+
+  function renderDiscordBadges(){
+    const wrap = document.getElementById('previewBadges');
+    const flag = document.getElementById('demoFlag');
+    if(!state.discord){ wrap.style.display='none'; flag.style.display='none'; return; }
+    wrap.innerHTML = '';
+    const flags = state.discord.flags || [];
+    flags.forEach(f=>{
+      const b = document.createElement('div'); b.className='badge'; b.title=f; b.innerHTML = badgeSvg();
+      wrap.appendChild(b);
+    });
+    if(!flags.length){
+      const b = document.createElement('div'); b.className='badge'; b.title='Discord connected'; b.innerHTML = badgeSvg();
+      wrap.appendChild(b);
+    }
+    wrap.style.display = 'flex';
+    flag.style.display = state.discordDemo ? 'block' : 'none';
+  }
+
+  function decodeFlags(bitfield){
+    return DISCORD_FLAGS.filter(f => (bitfield & f.bit) === f.bit).map(f=>f.name);
+  }
+
+  async function finishDiscordLogin(token){
+    try{
+      const res = await fetch('https://discord.com/api/users/@me', {headers:{Authorization:'Bearer '+token}});
+      if(!res.ok) throw new Error('auth failed');
+      const u = await res.json();
+      const avatar = u.avatar ? ('https://cdn.discordapp.com/avatars/'+u.id+'/'+u.avatar+'.png?size=128') : null;
+      state.discord = { username: u.global_name || u.username, handle: u.username, avatar, flags: decodeFlags(u.public_flags || 0) };
+      state.discordDemo = false;
+      applyDiscordToProfile();
+    }catch(err){
+      alert('Discord connect failed — check your Client ID and redirect URL in the Discord developer portal.');
+    }
+  }
+
+  function applyDiscordToProfile(){
+    document.getElementById('discordDisconnected').style.display = 'none';
+    document.getElementById('discordConnected').style.display = 'block';
+    if(state.discord.avatar) state.avatarUrl = state.discord.avatar;
+    nameInput.value = state.discord.username;
+    userInput.value = slug(state.discord.handle);
+    state.name = state.discord.username;
+    state.user = slug(state.discord.handle);
+    renderProfile();
+    renderDiscordBadges();
+  }
+
+  document.getElementById('discordConnectBtn').addEventListener('click', ()=>{
+    const clientId = document.getElementById('clientIdInput').value.trim();
+    if(!clientId){ alert("Add your Discord app's Client ID above first."); return; }
+    const redirect = encodeURIComponent(window.location.href.split('#')[0].split('?')[0]);
+    const url = 'https://discord.com/api/oauth2/authorize?client_id='+encodeURIComponent(clientId)+'&redirect_uri='+redirect+'&response_type=token&scope=identify';
+    window.location.href = url;
+  });
+
+  document.getElementById('discordDemoBtn').addEventListener('click', ()=>{
+    state.discord = { username: 'Ark', handle:'ark.dev', avatar:null, flags: ['Early Supporter','Active Developer'] };
+    state.discordDemo = true;
+    applyDiscordToProfile();
+  });
+
+  document.getElementById('discordDisconnectBtn').addEventListener('click', ()=>{
+    state.discord = null; state.discordDemo = false;
+    document.getElementById('discordDisconnected').style.display = 'block';
+    document.getElementById('discordConnected').style.display = 'none';
+    renderDiscordBadges();
+  });
+
+  (function checkOAuthReturn(){
+    const hash = window.location.hash;
+    if(hash && hash.includes('access_token')){
+      const params = new URLSearchParams(hash.slice(1));
+      const token = params.get('access_token');
+      if(token){
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+        if(state.pro) finishDiscordLogin(token);
+      }
+    }
+  })();
+
+  function renderProfile(){
+    document.getElementById('previewName').firstChild.textContent = state.name + ' ';
+    document.getElementById('previewUser').textContent = '@' + state.user;
+    document.getElementById('previewBio').textContent = state.bio;
+    addressBar.textContent = 'accountbooks.com/' + state.user;
+
+    const avatarBox = document.getElementById('previewAvatar');
+    if(state.avatarUrl){ avatarBox.innerHTML = '<img src="'+state.avatarUrl+'" alt="">'; }
+    else { avatarBox.textContent = (state.name[0] || '?').toUpperCase(); }
+
+    const linksBox = document.getElementById('previewLinks');
+    linksBox.innerHTML = '';
+    state.links.forEach(l=>{
+      const a = document.createElement('a');
+      a.href = l.url || '#'; a.className = 'profile-link'; a.target='_blank'; a.rel='noopener';
+      const icon = PLATFORM_ICONS[l.platform] || PLATFORM_ICONS.custom;
+      a.innerHTML = '<span class="pl-icon">'+icon+'</span><span class="pl-label">'+(l.label || l.platform)+'</span><span class="pl-arrow">↗</span>';
+      linksBox.appendChild(a);
+    });
+
+    document.getElementById('watermark').style.display = state.pro ? 'none' : 'flex';
+    document.getElementById('proTag').style.display = state.pro ? 'inline-block' : 'none';
+  }
+
+  const upgradeBar = document.getElementById('upgradeBar');
+  function updateProGating(){
+    document.querySelectorAll('[data-lock]').forEach(el=>{ el.style.display = state.pro ? 'none' : 'inline'; });
+    document.getElementById('planPillText').textContent = state.pro ? 'Pro plan' : 'Free plan';
+    document.getElementById('planPill').classList.toggle('is-pro', state.pro);
+
+    document.getElementById('cursorLocked').style.display = state.pro ? 'none' : 'block';
+    document.getElementById('cursorUnlocked').style.display = state.pro ? 'block' : 'none';
+    document.getElementById('fxLocked').style.display = state.pro ? 'none' : 'block';
+    document.getElementById('fxUnlocked').style.display = state.pro ? 'block' : 'none';
+    document.getElementById('musicLocked').style.display = state.pro ? 'none' : 'block';
+    document.getElementById('musicUnlocked').style.display = state.pro ? 'block' : 'none';
+    document.getElementById('discordLocked').style.display = state.pro ? 'none' : 'block';
+    document.getElementById('discordUnlocked').style.display = state.pro ? 'block' : 'none';
+
+    if(state.pro){
+      upgradeBar.classList.add('pro-on');
+      upgradeBar.querySelector('.l').innerHTML = "You're on the <b>Pro</b> plan.";
+      upgradeBar.querySelector('button').textContent = 'Manage subscription';
+    } else {
+      upgradeBar.classList.remove('pro-on');
+      upgradeBar.querySelector('.l').innerHTML = "You're on the <b>Free</b> plan — cursors, effects, music and Discord are Pro.";
+      upgradeBar.querySelector('button').textContent = 'Upgrade — €2/mo';
+      if(state.cursor !== 'system'){ state.cursor='system'; stage.style.cursor='auto'; cursorEl.style.opacity=0; document.querySelectorAll('#cursorOpts .opt').forEach(b=>b.classList.toggle('active', b.dataset.cursor==='system')); }
+      if(state.fx !== 'none'){ state.fx='none'; document.querySelectorAll('#fxOpts .opt').forEach(b=>b.classList.toggle('active', b.dataset.fx==='none')); startFx('none'); }
+    }
+    updateLinkCount();
+    renderProfile();
+  }
+
+  function openUpgradeModal(){ document.getElementById('upgradeModal').classList.add('open'); }
+  function closeUpgradeModal(){ document.getElementById('upgradeModal').classList.remove('open'); }
+
+  ['upgradeBarBtn','cursorUpgradeBtn','fxUpgradeBtn','musicUpgradeBtn','discordUpgradeBtn'].forEach(id=>{
+    document.getElementById(id).addEventListener('click', ()=>{
+      if(state.pro && id==='upgradeBarBtn'){
+        if(confirm('Downgrade to Free? This will lock Pro features again.')){ state.pro=false; updateProGating(); }
+        return;
+      }
+      openUpgradeModal();
+    });
+  });
+  document.getElementById('upgradeCancel').addEventListener('click', closeUpgradeModal);
+  document.getElementById('upgradeModal').addEventListener('click', e=>{ if(e.target.id==='upgradeModal') closeUpgradeModal(); });
+  document.getElementById('upgradeConfirm').addEventListener('click', ()=>{
+    state.pro = true;
+    updateProGating();
+    closeUpgradeModal();
+  });
+
+  // read query params coming from the landing page: ?u=username prefill, ?upgrade=1 auto-open modal
+  (function readQueryParams(){
+    const params = new URLSearchParams(window.location.search);
+    const u = params.get('u');
+    if(u){
+      const clean = slug(u);
+      userInput.value = clean;
+      nameInput.value = clean.charAt(0).toUpperCase() + clean.slice(1);
+      state.user = clean;
+      state.name = nameInput.value;
+    }
+    if(params.get('upgrade') === '1'){
+      openUpgradeModal();
+    }
+  })();
+
+  renderLinkRows();
+  renderProfile();
+  applyTheme();
+  sizeCanvas();
+  updateProGating();
+})();
+</script>
+</body>
+</html>
